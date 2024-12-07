@@ -84,7 +84,7 @@ func isSafe(report []int) bool {
 }
 
 func remove(slice []int, s int) []int {
-	return append(slice[:s], slice[s+1:]...)
+	return append(append([]int{}, slice[:s]...), slice[s+1:]...)
 }
 
 func d2part2(reports [][]int) int {
@@ -94,11 +94,8 @@ func d2part2(reports [][]int) int {
 		if isSafe(report) {
 			safeReports++
 		} else {
-			fmt.Println("TEst")
-			fmt.Println(report)
 			for i := range len(report) {
 				newReport := remove(report, i)
-				fmt.Println(newReport)
 				if isSafe(newReport) {
 					safeReports++
 					break
