@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -50,15 +51,6 @@ func Day6() {
 func Contains(visited [][]int, location []int) bool {
 	for i := range len(visited) {
 		if visited[i][0] == location[0] && visited[i][1] == location[1] {
-			return true
-		}
-	}
-	return false
-}
-
-func containsWithDirection(visited [][]int, location []int) bool {
-	for i := range len(visited) {
-		if visited[i][0] == location[0] && visited[i][1] == location[1] && visited[i][2] == location[2] {
 			return true
 		}
 	}
@@ -129,83 +121,103 @@ func d6part1(direction int, loc []int, barrier [][]int, rowLength int, columnLen
 	return len(visited)
 }
 
+type count struct {
+	mu    sync.Mutex
+	count int
+}
+
 func d6part2(defaultDirection int, defaultLoc []int, defaultBarrier [][]int, rowLength int, columnLength int) int {
 
-	num := 0
+	var wg sync.WaitGroup
+	num := count{
+		mu:    sync.Mutex{},
+		count: 0,
+	}
 
 	for row := range rowLength {
 		for col := range columnLength {
 			if !Contains(defaultBarrier, []int{row, col}) && !(defaultLoc[0] == row && defaultLoc[1] == col) {
-				barrier := append(defaultBarrier, []int{row, col})
-
-				loc := defaultLoc
-				direction := defaultDirection
-				var visited [][]int
-				running := true
-
-				for running {
-
-					r := loc[0]
-					c := loc[1]
-
-					if containsWithDirection(visited, []int{r, c, direction}) {
-						num++
-						running = false
-						break
-					} else {
-						visited = append(visited, []int{r, c, direction})
+				wg.Add(1)
+				go func(row int, col int) {
+					defer wg.Done()
+					barrier := make(map[string]struct{})
+					barrier[fmt.Sprintf("%d,%d", row, col)] = struct{}{}
+					for _, barr := range defaultBarrier {
+						barrier[fmt.Sprintf("%d,%d", barr[0], barr[1])] = struct{}{}
 					}
 
-					switch direction {
-					case 4:
-						{
-							if r == 0 {
-								running = false
-							} else if !Contains(barrier, []int{r - 1, c}) {
-								loc = []int{r - 1, c}
-							} else {
-								direction = 5
-							}
-						}
+					loc := defaultLoc
+					direction := defaultDirection
+					visited := make(map[string]struct{})
+					running := true
 
-					case 5:
-						{
-							if c == rowLength-1 {
-								running = false
-							} else if !Contains(barrier, []int{r, c + 1}) {
-								loc = []int{r, c + 1}
-							} else {
-								direction = 6
-							}
-						}
+					for running {
 
-					case 6:
-						{
-							if r == columnLength-1 {
-								running = false
-							} else if !Contains(barrier, []int{r + 1, c}) {
-								loc = []int{r + 1, c}
-							} else {
-								direction = 7
-							}
+						r, c := loc[0], loc[1]
+						key := fmt.Sprintf("%d,%d,%d", r, c, direction)
+						if _, found := visited[key]; found {
+							num.mu.Lock()
+							num.count++
+							num.mu.Unlock()
+							running = false
+							break
 						}
+						visited[key] = struct{}{}
 
-					case 7:
-						{
-							if c == 0 {
-								running = false
-							} else if !Contains(barrier, []int{r, c - 1}) {
-								loc = []int{r, c - 1}
-							} else {
-								direction = 4
+						switch direction {
+						case 4:
+							{
+								if r == 0 {
+									running = false
+								} else if _, blocked := barrier[fmt.Sprintf("%d,%d", r-1, c)]; !blocked {
+									loc = []int{r - 1, c}
+								} else {
+									direction = 5
+								}
 							}
-						}
 
+						case 5:
+							{
+								if c == rowLength-1 {
+									running = false
+								} else if _, blocked := barrier[fmt.Sprintf("%d,%d", r, c+1)]; !blocked {
+									loc = []int{r, c + 1}
+								} else {
+									direction = 6
+								}
+							}
+
+						case 6:
+							{
+								if r == columnLength-1 {
+									running = false
+								} else if _, blocked := barrier[fmt.Sprintf("%d,%d", r+1, c)]; !blocked {
+									loc = []int{r + 1, c}
+								} else {
+									direction = 7
+								}
+							}
+
+						case 7:
+							{
+								if c == 0 {
+									running = false
+								} else if _, blocked := barrier[fmt.Sprintf("%d,%d", r, c-1)]; !blocked {
+									loc = []int{r, c - 1}
+								} else {
+									direction = 4
+								}
+							}
+
+						}
 					}
-				}
+				}(row, col)
+
 			}
 		}
 	}
 
-	return num
+	wg.Wait()
+
+	return num.count
 }

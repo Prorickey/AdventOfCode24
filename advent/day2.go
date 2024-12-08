@@ -27,10 +27,10 @@ func Day2() {
 	}
 
 	start := time.Now()
-	count := d2part1(reports)
+	num := d2part1(reports)
 	end := time.Now()
 
-	fmt.Println("Part 1 / Safe reports: ", count)
+	fmt.Println("Part 1 / Safe reports: ", num)
 	fmt.Println("Took ", end.Sub(start))
 
 	start2 := time.Now()
@@ -61,7 +61,6 @@ func isSafe(report []int) bool {
 		if inc != nil {
 			if (report[j] > report[j-1] && !*inc) || (report[j] < report[j-1] && *inc) {
 				safe = false
-				fmt.Println(report)
 				break
 			}
 		} else {

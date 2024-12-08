@@ -1,7 +1,12 @@
 package main
 
+import (
+	"adventOfCode/advent"
+	"fmt"
+)
+
 func main() {
-	/*fmt.Println("Day 1")
+	fmt.Println("Day 1")
 	advent.Day1()
 	fmt.Println("Day 2")
 	advent.Day2()
@@ -17,5 +22,5 @@ func main() {
 	advent.Day7()
 	fmt.Println("Day 9")
 	advent.Day8()
-	*/
+
 }
