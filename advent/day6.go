@@ -47,7 +47,7 @@ func Day6() {
 
 }
 
-func contains(visited [][]int, location []int) bool {
+func Contains(visited [][]int, location []int) bool {
 	for i := range len(visited) {
 		if visited[i][0] == location[0] && visited[i][1] == location[1] {
 			return true
@@ -74,7 +74,7 @@ func d6part1(direction int, loc []int, barrier [][]int, rowLength int, columnLen
 		r := loc[0]
 		c := loc[1]
 
-		if !contains(visited, []int{r, c}) {
+		if !Contains(visited, []int{r, c}) {
 			visited = append(visited, []int{r, c})
 		}
 
@@ -83,7 +83,7 @@ func d6part1(direction int, loc []int, barrier [][]int, rowLength int, columnLen
 			{
 				if r == 0 {
 					running = false
-				} else if !contains(barrier, []int{r - 1, c}) {
+				} else if !Contains(barrier, []int{r - 1, c}) {
 					loc = []int{r - 1, c}
 				} else {
 					direction = 5
@@ -94,7 +94,7 @@ func d6part1(direction int, loc []int, barrier [][]int, rowLength int, columnLen
 			{
 				if c == rowLength-1 {
 					running = false
-				} else if !contains(barrier, []int{r, c + 1}) {
+				} else if !Contains(barrier, []int{r, c + 1}) {
 					loc = []int{r, c + 1}
 				} else {
 					direction = 6
@@ -105,7 +105,7 @@ func d6part1(direction int, loc []int, barrier [][]int, rowLength int, columnLen
 			{
 				if r == columnLength-1 {
 					running = false
-				} else if !contains(barrier, []int{r + 1, c}) {
+				} else if !Contains(barrier, []int{r + 1, c}) {
 					loc = []int{r + 1, c}
 				} else {
 					direction = 7
@@ -116,7 +116,7 @@ func d6part1(direction int, loc []int, barrier [][]int, rowLength int, columnLen
 			{
 				if c == 0 {
 					running = false
-				} else if !contains(barrier, []int{r, c - 1}) {
+				} else if !Contains(barrier, []int{r, c - 1}) {
 					loc = []int{r, c - 1}
 				} else {
 					direction = 4
@@ -135,7 +135,7 @@ func d6part2(defaultDirection int, defaultLoc []int, defaultBarrier [][]int, row
 
 	for row := range rowLength {
 		for col := range columnLength {
-			if !contains(defaultBarrier, []int{row, col}) && !(defaultLoc[0] == row && defaultLoc[1] == col) {
+			if !Contains(defaultBarrier, []int{row, col}) && !(defaultLoc[0] == row && defaultLoc[1] == col) {
 				barrier := append(defaultBarrier, []int{row, col})
 
 				loc := defaultLoc
@@ -161,7 +161,7 @@ func d6part2(defaultDirection int, defaultLoc []int, defaultBarrier [][]int, row
 						{
 							if r == 0 {
 								running = false
-							} else if !contains(barrier, []int{r - 1, c}) {
+							} else if !Contains(barrier, []int{r - 1, c}) {
 								loc = []int{r - 1, c}
 							} else {
 								direction = 5
@@ -172,7 +172,7 @@ func d6part2(defaultDirection int, defaultLoc []int, defaultBarrier [][]int, row
 						{
 							if c == rowLength-1 {
 								running = false
-							} else if !contains(barrier, []int{r, c + 1}) {
+							} else if !Contains(barrier, []int{r, c + 1}) {
 								loc = []int{r, c + 1}
 							} else {
 								direction = 6
@@ -183,7 +183,7 @@ func d6part2(defaultDirection int, defaultLoc []int, defaultBarrier [][]int, row
 						{
 							if r == columnLength-1 {
 								running = false
-							} else if !contains(barrier, []int{r + 1, c}) {
+							} else if !Contains(barrier, []int{r + 1, c}) {
 								loc = []int{r + 1, c}
 							} else {
 								direction = 7
@@ -194,7 +194,7 @@ func d6part2(defaultDirection int, defaultLoc []int, defaultBarrier [][]int, row
 						{
 							if c == 0 {
 								running = false
-							} else if !contains(barrier, []int{r, c - 1}) {
+							} else if !Contains(barrier, []int{r, c - 1}) {
 								loc = []int{r, c - 1}
 							} else {
 								direction = 4

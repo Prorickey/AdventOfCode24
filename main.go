@@ -14,5 +14,8 @@ func main() {
 	fmt.Println("Day 6")
 	advent.Day6()
 	fmt.Println("Day 7")
-	advent.Day7()*/
+	advent.Day7()
+	fmt.Println("Day 9")
+	advent.Day8()
+	*/
 }
